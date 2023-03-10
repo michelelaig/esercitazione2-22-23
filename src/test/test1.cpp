@@ -182,12 +182,12 @@ void test_bilateral() {
 void test_equalization() {
     Image im = load_image("data/dog.jpg");
     Image eqim1 = histogram_equalization_rgb(im, 256);
-    save_png(eqim1, "output/equalized_hsv");
+    save_png(eqim1, "output/equalized_rgb");
     Image gt1 = load_image("data/equalized_rgb.png");
     TEST(same_image(eqim1, gt1));
 
     Image eqim2 = histogram_equalization_hsv(im, 256);
-    save_png(eqim2, "output/equalized_rgb");
+    save_png(eqim2, "output/equalized_hsv");
     Image gt2 = load_image("data/equalized_hsv.png");
     TEST(same_image(eqim2, gt2));
 }
