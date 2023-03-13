@@ -2,6 +2,8 @@
 #include "../utils.h"
 
 #include <string>
+#include <iostream>
+#include <chrono>
 
 using namespace std;
 
@@ -78,6 +80,30 @@ void test_convolution() {
 
     Image gt = load_image("data/dog-box7.png");
     TEST(same_image(blur, gt));
+}
+
+void test_fast_convolution() {
+    Image im = load_image("data/dog.jpg");
+    Image f = make_box_filter(15);
+    // time the standard convolution
+    auto t = chrono::high_resolution_clock::now();
+    Image blur = convolve_image(im, f, true);
+    auto stop = chrono::high_resolution_clock::now();
+    auto standard_time = chrono::duration_cast<chrono::microseconds>(stop - t);
+    blur.clamp();
+    // time the fast convolution
+    t = chrono::high_resolution_clock::now();
+    Image blur2 = convolve_image_fast(im, f, true);
+    stop = chrono::high_resolution_clock::now();
+    auto fast_time = chrono::duration_cast<chrono::microseconds>(stop - t);
+    blur2.clamp();
+    cout << "Standard convolution took " << standard_time.count() << " seconds" << endl;
+    cout << "Fast convolution took " << fast_time.count() << " seconds" << endl;
+
+    Image gt = load_image("data/dog-box7.png");
+    TEST(same_image(blur, gt));
+    TEST(same_image(blur, blur2));
+    TEST(fast_time < standard_time/2);
 }
 
 void test_gaussian_filter() {
@@ -179,6 +205,31 @@ void test_bilateral() {
     TEST(same_image(bif, gt));
 }
 
+void test_fast_bilateral(){
+    Image im = load_image("data/dog.jpg");
+    // time the standard bilateral filter
+    auto t = chrono::high_resolution_clock::now();
+    Image bif = bilateral_filter(im, 3, 0.1);
+    auto stop = chrono::high_resolution_clock::now();
+    auto standard_time = chrono::duration_cast<chrono::milliseconds>(stop - t);
+
+    // time the fast bilateral filter
+    t = chrono::high_resolution_clock::now();
+    Image fast_bif = bilateral_filter_fast(im, 3, 0.1);
+    stop = chrono::high_resolution_clock::now();
+    auto fast_time = chrono::duration_cast<chrono::milliseconds>(stop - t);
+
+    cout << "Standard bilateral filter took " << standard_time.count() << " milliseconds" << endl;
+    cout << "Fast bilateral filter took " << fast_time.count() << " milliseconds" << endl;
+
+    save_png(bif, "output/bilateral_fast");
+    Image gt = load_image("data/dog-bilateral.png");
+    TEST(same_image(bif, gt));
+    TEST(same_image(fast_bif, gt));
+    // check that the fast bilateral filter is faster
+    TEST(fast_time < standard_time/2);
+}
+
 void test_equalization() {
     Image im = load_image("data/dog.jpg");
     Image eqim1 = histogram_equalization_rgb(im, 256);
@@ -210,6 +261,9 @@ void run_tests() {
 
     test_bilateral();
     test_equalization();
+    // tests on code efficiency
+    test_fast_convolution();
+    test_fast_bilateral();
     printf("%d tests, %d passed, %d failed\n", tests_total,
            tests_total - tests_fail, tests_fail);
 }

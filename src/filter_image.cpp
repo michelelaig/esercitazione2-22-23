@@ -48,6 +48,26 @@ Image convolve_image(const Image &im, const Image &filter, bool preserve) {
     return im;
 }
 
+// HW1 #2.2+ Fast convolution
+// const Image&im: input image
+// const Image& filter: filter to convolve with
+// bool preserve: whether to preserve number of channels
+// returns the convolved image
+Image convolve_image_fast(const Image &im, const Image &filter, bool preserve) {
+    assert(filter.c == 1);
+    Image ret;
+    // This is the case when we need to use the function clamped_pixel(x,y,c).
+    // Otherwise you'll have to manually check whether the filter goes out of bounds
+
+    // TODO: Make sure you set the sizes of ret properly. Use ret=Image(w,h,c) to reset ret
+    // TODO: Do the fast convolution operator. Remember to use Eigen for matrix operations
+    NOT_IMPLEMENTED();
+
+    // Make sure to return ret and not im. This is just a placeholder
+    return im;
+}
+
+
 // HW1 #2.3
 // returns basic 3x3 high-pass filter
 Image make_highpass_filter() {
@@ -201,6 +221,18 @@ Image bilateral_filter(const Image &im, float sigma1, float sigma2) {
     return bf;
 }
 
+// HW1 #4.5+ Fast bilateral filter
+// const Image& im: input image
+// float sigma1,sigma2: the two sigmas for bilateral filter
+// returns the result of applying bilateral filtering to im
+Image bilateral_filter_fast(const Image &im, float sigma1, float sigma2) {
+    Image bf = im;
+
+    // TODO: Your fast bilateral code
+    NOT_IMPLEMENTED();
+
+    return bf;
+}
 
 // HM #5
 //

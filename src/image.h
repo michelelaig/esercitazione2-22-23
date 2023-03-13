@@ -238,6 +238,7 @@ Image bilinear_resize(const Image& im, int w, int h);
 
 // Filtering
 Image convolve_image(const Image& im, const Image& filter, bool preserve);
+Image convolve_image_fast(const Image& im, const Image& filter, bool preserve);
 Image make_box_filter(int w);
 Image make_highpass_filter(void);
 Image make_sharpen_filter(void);
@@ -252,7 +253,8 @@ void threshold_image(Image& im, float thresh);
 pair<Image,Image> sobel_image(const Image&  im);
 Image colorize_sobel(const Image&  im);
 Image smooth_image(const Image&  im, float sigma);
-Image bilateral_filter(const Image& im, float sigma, float sigma2);
+Image bilateral_filter(const Image& im, float sigma1, float sigma2);
+Image bilateral_filter_fast(const Image &im, float sigma1, float sigma2);
 Image histogram_equalization_hsv(const Image& im, int num_bins);
 Image histogram_equalization_rgb(const Image& im, int num_bins);
 
