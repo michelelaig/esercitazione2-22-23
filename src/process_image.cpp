@@ -2,7 +2,7 @@
 #include <cstring>
 #include <cassert>
 #include <cmath>
-
+#include <iostream>
 #include "image.h"
 
 using namespace std;
@@ -14,11 +14,15 @@ Image rgb_to_grayscale(const Image& im)
   {
   assert(im.c == 3); // only accept RGB images
   Image gray(im.w,im.h,1); // create a new grayscale image (note: 1 channel)
-  
+  float l;
   // TODO: calculate the pixels of 'gray'
-  
-  
-  NOT_IMPLEMENTED();
+  for (int x = 0;x<im.w;x++) for (int y=0;y<im.h;y++) 
+	{
+  	l = im.clamped_pixel(x,y,0)*0.299+im.clamped_pixel(x,y,1)*.587+im.clamped_pixel(x,y,2)*.114;
+	gray.set_pixel(x,y,0,l);
+  	}
+  //Y' = 0.299 R' + 0.587 G' + .114 B' 
+  //NOT_IMPLEMENTED();
   
   return gray;
   }
@@ -51,11 +55,9 @@ Image grayscale_to_rgb(const Image& im, float r, float g, float b)
 void shift_image(Image& im, int c, float v)
   {
   assert(c>=0 && c<im.c); // needs to be a valid channel
-  
   // TODO: shift all the pixels at the specified channel
-  
-  NOT_IMPLEMENTED();
-  
+  for (int x = 0;x<im.w;x++) for (int y=0;y<im.h;y++)
+  im.set_pixel(x,y,c,im.clamped_pixel(x,y,c)+v);
   }
 
 // HW0 #8

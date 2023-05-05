@@ -30,7 +30,7 @@ struct Image
     {
     assert(c>=0 && w>=0 && h>=0 && "Invalid image sizes");
     
-    if(w*h*c)
+    if(w&&h&&c)
       data=(float*)calloc(w*h*c,sizeof(float));
     
     }

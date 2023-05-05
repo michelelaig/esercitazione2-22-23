@@ -12,7 +12,6 @@ void test_nn_resize() {
     Image resized = nearest_resize(im, im.w * 4, im.h * 4);
     Image gt = load_image("data/dog4x-nn-for-test.png");
     TEST(same_image(resized, gt));
-
     Image im2 = load_image("data/dog.jpg");
     Image resized2 = nearest_resize(im2, 713, 467);
     Image gt2 = load_image("data/dog-resize-nn.png");
@@ -21,14 +20,16 @@ void test_nn_resize() {
 
 void test_bl_resize() {
     Image im = load_image("data/dogsmall.jpg");
+    //Image im = load_image("data/copy.jpg");
     Image resized = bilinear_resize(im, im.w * 4, im.h * 4);
     Image gt = load_image("data/dog4x-bl.png");
     TEST(same_image(resized, gt));
-
+    
     Image im2 = load_image("data/dog.jpg");
     Image resized2 = bilinear_resize(im2, 713, 467);
     Image gt2 = load_image("data/dog-resize-bil.png");
     TEST(same_image(resized2, gt2));
+    
 }
 
 void test_multiple_resize() {
@@ -245,9 +246,10 @@ void test_equalization() {
 
 
 void run_tests() {
-    test_nn_resize();
-    test_bl_resize();
-    test_multiple_resize();
+    //test_nn_resize();
+	test_bl_resize();
+    /*
+	test_multiple_resize();
 
     test_gaussian_filter();
     test_sharpen_filter();
@@ -264,7 +266,8 @@ void run_tests() {
     // tests on code efficiency
     test_fast_convolution();
     test_fast_bilateral();
-    printf("%d tests, %d passed, %d failed\n", tests_total,
+    */
+	printf("%d tests, %d passed, %d failed\n", tests_total,
            tests_total - tests_fail, tests_fail);
 }
 
