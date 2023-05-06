@@ -1,6 +1,5 @@
 #include "../image.h"
 #include "../utils.h"
-
 #include <string>
 #include <iostream>
 #include <chrono>
@@ -246,16 +245,20 @@ void test_equalization() {
 
 
 void run_tests() {
-    //test_nn_resize();
-	test_bl_resize();
-    /*
-	test_multiple_resize();
+    test_convolution();
 
+
+    //test_nn_resize();
+	//test_bl_resize();
+    
+	//test_multiple_resize();
+    
+    /*
     test_gaussian_filter();
+
     test_sharpen_filter();
     test_emboss_filter();
     test_highpass_filter();
-    test_convolution();
     test_gaussian_blur();
     test_hybrid_image();
     test_frequency_image();

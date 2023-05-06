@@ -3,49 +3,67 @@
 #include <string.h>
 #include <math.h>
 #include <assert.h>
+#include <iostream>
+
 #include "image.h"
+using namespace std;
 
 #define M_PI 3.14159265358979323846
 
-// HW1 #2.1
-// Image& im: image to L1-normalize
+
 void l1_normalize(Image &im) {
-
-    // TODO: Normalize each channel
-    NOT_IMPLEMENTED();
-
-
+    float tot = 0;
+    for (int i= 0;i<im.h*im.w*im.c;i++) tot += im.data[i];
+    for (int i= 0;i<im.h*im.w*im.c;i++) im.data[i]/=tot;
 }
 
-// HW1 #2.1
-// int w: size of filter
-// returns the filter Image of size WxW
 Image make_box_filter(int w) {
     assert(w % 2); // w needs to be odd
-
-    // TODO: Implement the filter
-    NOT_IMPLEMENTED();
-
-    return Image(1, 1, 1);
+    Image out(w,w,1);
+    float t = 1.0/(w*w);
+    for (int i= 0;i<w*w;i++) out.data[i] = t;
+    return out;
 }
 
-// HW1 #2.2
-// const Image&im: input image
-// const Image& filter: filter to convolve with
-// bool preserve: whether to preserve number of channels
-// returns the convolved image
-Image convolve_image(const Image &im, const Image &filter, bool preserve) {
-    assert(filter.c == 1);
-    Image ret;
-    // This is the case when we need to use the function clamped_pixel(x,y,c).
-    // Otherwise you'll have to manually check whether the filter goes out of bounds
+Image convolve_image(const Image& im, const Image& filter, bool preserve) {
+  assert(filter.c == 1);
 
-    // TODO: Make sure you set the sizes of ret properly. Use ret=Image(w,h,c) to reset ret
-    // TODO: Do the convolution operator
-    NOT_IMPLEMENTED();
+  int channels = preserve ? im.c : 1;
+  Image ret(im.w, im.h, channels);
+  // This is the case when we need to use the function clamped_pixel(x,y,c).
+  // Otherwise you'll have to manually check whether the filter goes out of
+  // bounds
 
-    // Make sure to return ret and not im. This is just a placeholder
-    return im;
+  // TODO: Make sure you set the sizes of ret properly. Use ret=Image(w,h,c) to
+  // reset ret
+  // TODO: Do the convolution operator
+  auto convolve = [&](int x, int y, int c) {
+    float value = 0;
+    for (int i = 0; i < filter.w; i++) {
+      for (int j = 0; j < filter.h; j++) {
+        value +=
+            im.clamped_pixel(x + i - filter.w / 2, y + j - filter.h / 2, c) *
+            filter(i, j, 0);
+      }
+    }
+    return value;
+  };
+
+  for (int i = 0; i < im.w; i++) {
+    for (int j = 0; j < im.h; j++) {
+      float agg_value = 0;
+      for (int c = 0; c < channels; c++) {
+        if (preserve) {
+          ret.set_pixel(i, j, c, convolve(i, j, c));
+        } else {
+          agg_value += convolve(i, j, c);
+        }
+      }
+      if (!preserve) ret.set_pixel(i, j, 0, agg_value);
+    }
+  }
+
+  return ret;
 }
 
 // HW1 #2.2+ Fast convolution
@@ -67,34 +85,31 @@ Image convolve_image_fast(const Image &im, const Image &filter, bool preserve) {
     return im;
 }
 
-
+Image filterarr(int* a,int l){
+Image out(l,l,1);
+for(int i=0;i<l;i++) for(int j=0;j<l;j++) out.set_pixel(i,j,0,a[i*l+j]);
+return out;
+}
 // HW1 #2.3
 // returns basic 3x3 high-pass filter
 Image make_highpass_filter() {
-    // TODO: Implement the filter
-    NOT_IMPLEMENTED();
-
-    return Image(1, 1, 1);
-
+    int arr[9] = {0,-1,0,-1,4,-1,0,-1,0};
+    return filterarr(arr,3);
 }
 
 // HW1 #2.3
 // returns basic 3x3 sharpen filter
 Image make_sharpen_filter() {
-    // TODO: Implement the filter
-    NOT_IMPLEMENTED();
-
-    return Image(1, 1, 1);
+    int arr[9] = {0,-1,0,-1,5,-1,0,-1,0};
+    return filterarr(arr,3);
 
 }
 
 // HW1 #2.3
 // returns basic 3x3 emboss filter
 Image make_emboss_filter() {
-    // TODO: Implement the filter
-    NOT_IMPLEMENTED();
-
-    return Image(1, 1, 1);
+    int arr[9] = {2,-1,0,-1,1,1,0,1,2};
+    return filterarr(arr,3);
 
 }
 
@@ -102,11 +117,20 @@ Image make_emboss_filter() {
 // float sigma: sigma for the gaussian filter
 // returns basic gaussian filter
 Image make_gaussian_filter(float sigma) {
-    // TODO: Implement the filter
-    NOT_IMPLEMENTED();
+    int ker_dim = ceil(6*sigma);
+    if (ker_dim %2==0) ker_dim++;
+
+    Image filter(ker_dim,ker_dim,1);
+
+    auto gauss_form = [&](int x, int y) {
+    float x_d = x-ker_dim/2; float y_d = y-ker_dim/2;
+    return exp(-1*(x_d*x_d+y_d*y_d)/(2*sigma*sigma))/(2*M_PI*sigma*sigma);      
+    };
+
+    for (int i=0;i<ker_dim;i++) for (int j=0;j<ker_dim;j++) 
+    filter.set_pixel(i,j,0,gauss_form(i,j));
 
     return Image(1, 1, 1);
-
 }
 
 
