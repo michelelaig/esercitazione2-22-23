@@ -86,6 +86,7 @@ Image convolve_image_fast(const Image &im, const Image &filter, bool preserve) {
 }
 
 Image filterarr(int* a,int l){
+assert(l%2);
 Image out(l,l,1);
 for(int i=0;i<l;i++) for(int j=0;j<l;j++) out.set_pixel(i,j,0,a[i*l+j]);
 return out;
@@ -93,7 +94,7 @@ return out;
 // HW1 #2.3
 // returns basic 3x3 high-pass filter
 Image make_highpass_filter() {
-    int arr[9] = {0,-1,0,-1,4,-1,0,-1,0};
+    int arr[9] = {0,-1,0,-1,4,-1,0,1,0};
     return filterarr(arr,3);
 }
 
@@ -108,7 +109,7 @@ Image make_sharpen_filter() {
 // HW1 #2.3
 // returns basic 3x3 emboss filter
 Image make_emboss_filter() {
-    int arr[9] = {2,-1,0,-1,1,1,0,1,2};
+    int arr[9] = {-2,-1,0,-1,1,1,0,1,2};
     return filterarr(arr,3);
 
 }
@@ -130,7 +131,7 @@ Image make_gaussian_filter(float sigma) {
     for (int i=0;i<ker_dim;i++) for (int j=0;j<ker_dim;j++) 
     filter.set_pixel(i,j,0,gauss_form(i,j));
 
-    return Image(1, 1, 1);
+    return filter;
 }
 
 
@@ -142,10 +143,12 @@ Image add_image(const Image &a, const Image &b) {
     assert(a.w == b.w && a.h == b.h &&
            a.c == b.c); // assure images are the same size
 
-    // TODO: Implement addition
-    NOT_IMPLEMENTED();
+    Image out(a.w,a.h,a.c);
+    memcpy(out.data,a.data,a.w*a.h*a.c*sizeof(float));
+    for (int i=0;i<a.w*a.h*a.c;i++) out.data[i]+=b.data[i];
+    //out.save_png("output/copia");
 
-    return a;
+    return out;
 
 }
 
@@ -157,39 +160,42 @@ Image sub_image(const Image &a, const Image &b) {
     assert(a.w == b.w && a.h == b.h &&
            a.c == b.c); // assure images are the same size
 
-    // TODO: Implement subtraction
-    NOT_IMPLEMENTED();
-
-    return a;
+    Image out(a.w,a.h,a.c);
+    memcpy(out.data,a.data,a.w*a.h*a.c*sizeof(float));
+    for (int i=0;i<a.w*a.h*a.c;i++) out.data[i]-=b.data[i];
+    //out.save_png("output/copia");
+    return out;
 
 }
 
 // HW1 #4.1
 // returns basic GX filter
 Image make_gx_filter() {
-    // TODO: Implement the filter
-    NOT_IMPLEMENTED();
-
-    return Image(1, 1, 1);
+    int arr[9] = {-1,0,1,-2,0,2,-1,0,1};
+    return filterarr(arr,3);
 }
 
 // HW1 #4.1
 // returns basic GY filter
 Image make_gy_filter() {
-    // TODO: Implement the filter
-    NOT_IMPLEMENTED();
-
-    return Image(1, 1, 1);
+    int arr[9] = {-1,-2,-1,0,0,0,1,2,1};
+    return filterarr(arr,3);
 }
 
 // HW1 #4.2
 // Image& im: input image
 void feature_normalize(Image &im) {
     assert(im.w * im.h); // assure we have non-empty image
+    float* d = im.data;
+    float m = d[0];
+    float M = d[0];
 
-    // TODO: Normalize the features for each channel
-    NOT_IMPLEMENTED();
-
+    for (int i=1;i<im.w*im.h*im.c;i++){
+        if (d[i]<m) m=d[i];
+        if (d[i]>M) M=d[i];
+    }
+    assert(M!=0);
+    for (int i=1;i<im.w*im.h*im.c;i++) d[i] = (d[i]-m)/M;
 }
 
 

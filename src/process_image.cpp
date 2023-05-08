@@ -74,15 +74,19 @@ void scale_image(Image& im, int c, float v)
   
   }
 
-
+float clump(float v){
+  if (v>1) return 1.0;
+  if (v<0) return 0.0;
+  return v;
+}
 // HW0 #5
 // Image& im: input image to be modified in-place
 void clamp_image(Image& im)
   {
-  // TODO: clamp all the pixels in all channel to be between 0 and 1
-  
-  NOT_IMPLEMENTED();
-  
+
+  for (int i=0;i<im.w;i++) for(int j=0;j<im.h;j++) for (int c=0;c<im.c;c++)
+  im.set_pixel(i,j,c,clump(im.clamped_pixel(i,j,c)));
+
   }
 
 // These might be handy

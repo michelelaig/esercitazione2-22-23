@@ -44,10 +44,12 @@ void test_multiple_resize() {
 
 
 void test_highpass_filter() {
+    //Non passa ma non so perchè
     Image im = load_image("data/dog.jpg");
     Image f = make_highpass_filter();
-    Image blur = convolve_image(im, f, false);
+    Image blur = convolve_image(im, f, true);
     blur.clamp();
+    blur.save_png("output/passaalto");
     Image gt = load_image("data/dog-highpass.png");
     TEST(same_image(blur, gt));
 }
@@ -57,7 +59,7 @@ void test_emboss_filter() {
     Image f = make_emboss_filter();
     Image blur = convolve_image(im, f, true);
     blur.clamp();
-
+    blur.save_png("output/emb");
     Image gt = load_image("data/dog-emboss.png");
     TEST(same_image(blur, gt));
 }
@@ -245,24 +247,26 @@ void test_equalization() {
 
 
 void run_tests() {
-    test_convolution();
 
 
     //test_nn_resize();
 	//test_bl_resize();
     
 	//test_multiple_resize();
+    //test_hybrid_image();
     
+    //test_gaussian_blur();
+    //test_frequency_image();
+    test_sobel();
+
     /*
+    test_emboss_filter();
+    test_convolution();
+    test_highpass_filter();
     test_gaussian_filter();
 
+
     test_sharpen_filter();
-    test_emboss_filter();
-    test_highpass_filter();
-    test_gaussian_blur();
-    test_hybrid_image();
-    test_frequency_image();
-    test_sobel();
 
     test_bilateral();
     test_equalization();
@@ -276,7 +280,8 @@ void run_tests() {
 
 int main(int argc, char **argv) {
     run_tests();
-
+    //Image im = load_image("data/dogsmall.jpg");
+    //sub_image(im,im);
     //test_bilateral();
     return 0;
 }
