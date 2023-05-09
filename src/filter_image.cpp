@@ -3,67 +3,47 @@
 #include <string.h>
 #include <math.h>
 #include <assert.h>
-#include <iostream>
-
 #include "image.h"
-using namespace std;
 
 #define M_PI 3.14159265358979323846
 
-
+// HW1 #2.1
+// Image& im: image to L1-normalize
 void l1_normalize(Image &im) {
-    float tot = 0;
-    for (int i= 0;i<im.h*im.w*im.c;i++) tot += im.data[i];
-    for (int i= 0;i<im.h*im.w*im.c;i++) im.data[i]/=tot;
+    float sum = 0;
+    for (int k=0;k<im.w*im.h*im.c;k++) sum+=im.data[k];
+    for (int k=0;k<im.w*im.h*im.c;k++) im.data[k]/=sum;
 }
 
+// HW1 #2.1
+// int w: size of filter
+// returns the filter Image of size WxW
 Image make_box_filter(int w) {
     assert(w % 2); // w needs to be odd
-    Image out(w,w,1);
-    float t = 1.0/(w*w);
-    for (int i= 0;i<w*w;i++) out.data[i] = t;
-    return out;
+
+    Image ret(w,w,1);
+    for (int k=0;k<w*w;k++) ret.data[k]=1;
+    l1_normalize(ret);
+    return ret;
 }
 
-Image convolve_image(const Image& im, const Image& filter, bool preserve) {
-  assert(filter.c == 1);
+// HW1 #2.2
+// const Image&im: input image
+// const Image& filter: filter to convolve with
+// bool preserve: whether to preserve number of channels
+// returns the convolved image
+Image convolve_image(const Image &im, const Image &filter, bool preserve) {
+    assert(filter.c == 1);
+    Image ret;
+    // This is the case when we need to use the function clamped_pixel(x,y,c).
+    // Otherwise you'll have to manually check whether the filter goes out of bounds
 
-  int channels = preserve ? im.c : 1;
-  Image ret(im.w, im.h, channels);
-  // This is the case when we need to use the function clamped_pixel(x,y,c).
-  // Otherwise you'll have to manually check whether the filter goes out of
-  // bounds
+    // TODO: Make sure you set the sizes of ret properly. Use ret=Image(w,h,c) to reset ret
+    // TODO: Do the convolution operator
+    NOT_IMPLEMENTED();
 
-  // TODO: Make sure you set the sizes of ret properly. Use ret=Image(w,h,c) to
-  // reset ret
-  // TODO: Do the convolution operator
-  auto convolve = [&](int x, int y, int c) {
-    float value = 0;
-    for (int i = 0; i < filter.w; i++) {
-      for (int j = 0; j < filter.h; j++) {
-        value +=
-            im.clamped_pixel(x + i - filter.w / 2, y + j - filter.h / 2, c) *
-            filter(i, j, 0);
-      }
-    }
-    return value;
-  };
-
-  for (int i = 0; i < im.w; i++) {
-    for (int j = 0; j < im.h; j++) {
-      float agg_value = 0;
-      for (int c = 0; c < channels; c++) {
-        if (preserve) {
-          ret.set_pixel(i, j, c, convolve(i, j, c));
-        } else {
-          agg_value += convolve(i, j, c);
-        }
-      }
-      if (!preserve) ret.set_pixel(i, j, 0, agg_value);
-    }
-  }
-
-  return ret;
+    // Make sure to return ret and not im. This is just a placeholder
+    return im;
 }
 
 // HW1 #2.2+ Fast convolution
@@ -85,32 +65,34 @@ Image convolve_image_fast(const Image &im, const Image &filter, bool preserve) {
     return im;
 }
 
-Image filterarr(int* a,int l){
-assert(l%2);
-Image out(l,l,1);
-for(int i=0;i<l;i++) for(int j=0;j<l;j++) out.set_pixel(i,j,0,a[i*l+j]);
-return out;
-}
+
 // HW1 #2.3
 // returns basic 3x3 high-pass filter
 Image make_highpass_filter() {
-    int arr[9] = {0,-1,0,-1,4,-1,0,1,0};
-    return filterarr(arr,3);
+    // TODO: Implement the filter
+    NOT_IMPLEMENTED();
+
+    return Image(1, 1, 1);
+
 }
 
 // HW1 #2.3
 // returns basic 3x3 sharpen filter
 Image make_sharpen_filter() {
-    int arr[9] = {0,-1,0,-1,5,-1,0,-1,0};
-    return filterarr(arr,3);
+    // TODO: Implement the filter
+    NOT_IMPLEMENTED();
+
+    return Image(1, 1, 1);
 
 }
 
 // HW1 #2.3
 // returns basic 3x3 emboss filter
 Image make_emboss_filter() {
-    int arr[9] = {-2,-1,0,-1,1,1,0,1,2};
-    return filterarr(arr,3);
+    // TODO: Implement the filter
+    NOT_IMPLEMENTED();
+
+    return Image(1, 1, 1);
 
 }
 
@@ -118,20 +100,10 @@ Image make_emboss_filter() {
 // float sigma: sigma for the gaussian filter
 // returns basic gaussian filter
 Image make_gaussian_filter(float sigma) {
-    int ker_dim = ceil(6*sigma);
-    if (ker_dim %2==0) ker_dim++;
+    // TODO: Implement the filter
 
-    Image filter(ker_dim,ker_dim,1);
+    return Image(1, 1, 1);
 
-    auto gauss_form = [&](int x, int y) {
-    float x_d = x-ker_dim/2; float y_d = y-ker_dim/2;
-    return exp(-1*(x_d*x_d+y_d*y_d)/(2*sigma*sigma))/(2*M_PI*sigma*sigma);      
-    };
-
-    for (int i=0;i<ker_dim;i++) for (int j=0;j<ker_dim;j++) 
-    filter.set_pixel(i,j,0,gauss_form(i,j));
-
-    return filter;
 }
 
 
@@ -142,13 +114,9 @@ Image make_gaussian_filter(float sigma) {
 Image add_image(const Image &a, const Image &b) {
     assert(a.w == b.w && a.h == b.h &&
            a.c == b.c); // assure images are the same size
-
-    Image out(a.w,a.h,a.c);
-    memcpy(out.data,a.data,a.w*a.h*a.c*sizeof(float));
-    for (int i=0;i<a.w*a.h*a.c;i++) out.data[i]+=b.data[i];
-    //out.save_png("output/copia");
-
-    return out;
+    Image ret(a.w,a.h,a.c);
+    for(int k=0;k<a.h*a.w*a.c;k++) ret.data[k]=a.data[k]+b.data[k];
+    return ret;
 
 }
 
@@ -159,43 +127,48 @@ Image add_image(const Image &a, const Image &b) {
 Image sub_image(const Image &a, const Image &b) {
     assert(a.w == b.w && a.h == b.h &&
            a.c == b.c); // assure images are the same size
+    Image ret(a.w,a.h,a.c);
+    for(int k=0;k<a.h*a.w*a.c;k++) ret.data[k]=a.data[k]-b.data[k];
+    return ret;
 
-    Image out(a.w,a.h,a.c);
-    memcpy(out.data,a.data,a.w*a.h*a.c*sizeof(float));
-    for (int i=0;i<a.w*a.h*a.c;i++) out.data[i]-=b.data[i];
-    //out.save_png("output/copia");
-    return out;
+}
+
+Image sub_mod_image(const Image &a, const Image &b) {
+    assert(a.w == b.w && a.h == b.h &&
+           a.c == b.c); // assure images are the same size
+    Image ret(a.w,a.h,a.c);
+    for(int k=0;k<a.h*a.w*a.c;k++) ret.data[k]=a.data[k]-b.data[k];
+    for(int k=0;k<a.h*a.w*a.c;k++) if (ret.data[k]<0) ret.data[k]-=2*ret.data[k];
+    return ret;
 
 }
 
 // HW1 #4.1
 // returns basic GX filter
 Image make_gx_filter() {
-    int arr[9] = {-1,0,1,-2,0,2,-1,0,1};
-    return filterarr(arr,3);
+    // TODO: Implement the filter
+    NOT_IMPLEMENTED();
+
+    return Image(1, 1, 1);
 }
 
 // HW1 #4.1
 // returns basic GY filter
 Image make_gy_filter() {
-    int arr[9] = {-1,-2,-1,0,0,0,1,2,1};
-    return filterarr(arr,3);
+    // TODO: Implement the filter
+    NOT_IMPLEMENTED();
+
+    return Image(1, 1, 1);
 }
 
 // HW1 #4.2
 // Image& im: input image
 void feature_normalize(Image &im) {
     assert(im.w * im.h); // assure we have non-empty image
-    float* d = im.data;
-    float m = d[0];
-    float M = d[0];
 
-    for (int i=1;i<im.w*im.h*im.c;i++){
-        if (d[i]<m) m=d[i];
-        if (d[i]>M) M=d[i];
-    }
-    assert(M!=0);
-    for (int i=1;i<im.w*im.h*im.c;i++) d[i] = (d[i]-m)/M;
+    // TODO: Normalize the features for each channel
+    NOT_IMPLEMENTED();
+
 }
 
 

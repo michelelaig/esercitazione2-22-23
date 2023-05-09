@@ -1,5 +1,6 @@
 #include "../image.h"
 #include "../utils.h"
+
 #include <string>
 #include <iostream>
 #include <chrono>
@@ -10,25 +11,37 @@ void test_nn_resize() {
     Image im = load_image("data/dogsmall.jpg");
     Image resized = nearest_resize(im, im.w * 4, im.h * 4);
     Image gt = load_image("data/dog4x-nn-for-test.png");
+    resized.save_image("output/nn1");
     TEST(same_image(resized, gt));
+
+    //Image krok = sub_mod_image(resized,gt);
+    //krok.save_png("output/krok");
+
     Image im2 = load_image("data/dog.jpg");
     Image resized2 = nearest_resize(im2, 713, 467);
     Image gt2 = load_image("data/dog-resize-nn.png");
+    gt.save_image("output/nn1");
+    resized2.save_image("output/nn2");
+
+
+
     TEST(same_image(resized2, gt2));
 }
 
 void test_bl_resize() {
     Image im = load_image("data/dogsmall.jpg");
-    //Image im = load_image("data/copy.jpg");
     Image resized = bilinear_resize(im, im.w * 4, im.h * 4);
     Image gt = load_image("data/dog4x-bl.png");
+    resized.save_image("output/bil1");
+
     TEST(same_image(resized, gt));
-    
+
     Image im2 = load_image("data/dog.jpg");
     Image resized2 = bilinear_resize(im2, 713, 467);
     Image gt2 = load_image("data/dog-resize-bil.png");
+    resized.save_image("output/bil2");
+
     TEST(same_image(resized2, gt2));
-    
 }
 
 void test_multiple_resize() {
@@ -44,12 +57,10 @@ void test_multiple_resize() {
 
 
 void test_highpass_filter() {
-    //Non passa ma non so perchè
     Image im = load_image("data/dog.jpg");
     Image f = make_highpass_filter();
-    Image blur = convolve_image(im, f, true);
+    Image blur = convolve_image(im, f, false);
     blur.clamp();
-    blur.save_png("output/passaalto");
     Image gt = load_image("data/dog-highpass.png");
     TEST(same_image(blur, gt));
 }
@@ -59,7 +70,7 @@ void test_emboss_filter() {
     Image f = make_emboss_filter();
     Image blur = convolve_image(im, f, true);
     blur.clamp();
-    blur.save_png("output/emb");
+
     Image gt = load_image("data/dog-emboss.png");
     TEST(same_image(blur, gt));
 }
@@ -247,26 +258,22 @@ void test_equalization() {
 
 
 void run_tests() {
-
-
+    
     //test_nn_resize();
-	//test_bl_resize();
-    
-	//test_multiple_resize();
-    //test_hybrid_image();
-    
-    //test_gaussian_blur();
-    //test_frequency_image();
-    test_sobel();
-
-    /*
-    test_emboss_filter();
-    test_convolution();
-    test_highpass_filter();
+    //test_bl_resize();
+    //test_multiple_resize();
     test_gaussian_filter();
 
+    /*
 
     test_sharpen_filter();
+    test_emboss_filter();
+    test_highpass_filter();
+    test_convolution();
+    test_gaussian_blur();
+    test_hybrid_image();
+    test_frequency_image();
+    test_sobel();
 
     test_bilateral();
     test_equalization();
@@ -274,14 +281,13 @@ void run_tests() {
     test_fast_convolution();
     test_fast_bilateral();
     */
-	printf("%d tests, %d passed, %d failed\n", tests_total,
+    printf("%d tests, %d passed, %d failed\n", tests_total,
            tests_total - tests_fail, tests_fail);
 }
 
 int main(int argc, char **argv) {
     run_tests();
-    //Image im = load_image("data/dogsmall.jpg");
-    //sub_image(im,im);
+
     //test_bilateral();
     return 0;
 }

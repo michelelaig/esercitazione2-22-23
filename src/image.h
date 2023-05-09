@@ -30,7 +30,7 @@ struct Image
     {
     assert(c>=0 && w>=0 && h>=0 && "Invalid image sizes");
     
-    if(w&&h&&c)
+    if(w*h*c)
       data=(float*)calloc(w*h*c,sizeof(float));
     
     }
@@ -265,6 +265,7 @@ bool operator ==(const Image& a, const Image& b);
 int same_image(const Image& a, const Image& b);
 
 Image sub_image(const Image& a, const Image& b);
+Image sub_mod_image(const Image& a, const Image& b);
 Image add_image(const Image& a, const Image& b);
 Image operator-(const Image& a, const Image& b);
 Image operator+(const Image& a, const Image& b);

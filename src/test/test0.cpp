@@ -97,14 +97,14 @@ void test_rgb2lch2rgb()
 
 void run_tests()
   {
-  //test_get_pixel();
-  //test_set_pixel();
-  //test_copy();
-  //test_shift();
-  //test_grayscale();
+  test_get_pixel();
+  test_set_pixel();
+  test_copy();
+  test_shift();
+  test_grayscale();
   test_rgb_to_hsv();
-  //test_hsv_to_rgb();
-  //test_rgb2lch2rgb();
+  test_hsv_to_rgb();
+  test_rgb2lch2rgb();
   printf("%d tests, %d passed, %d failed\n", tests_total, tests_total-tests_fail, tests_fail);
   }
 
@@ -113,17 +113,14 @@ int main(int argc, char **argv)
   // Image manipulation for fun testing.
   
   Image im2 = load_image("data/dog.jpg");
-  //for (int i=0; i<im2.w; i++)
-  //    for (int j=0; j<im2.h; j++)
-  //        im2(i, j, 0) = 0;
-  run_tests();
-  
-
-  //shift_image(im2,0,.1);
+  for (int i=0; i<im2.w; i++)
+      for (int j=0; j<im2.h; j++)
+          im2(i, j, 0) = 0;
   im2.save_image("output/pixel_modifying_output");
   
   // Running example tests
   
+  run_tests();
   
   return 0;
   }
