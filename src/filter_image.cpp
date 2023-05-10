@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <iostream>
 #include <string.h>
 #include <math.h>
 #include <assert.h>
@@ -20,9 +21,8 @@ void l1_normalize(Image &im) {
 // returns the filter Image of size WxW
 Image make_box_filter(int w) {
     assert(w % 2); // w needs to be odd
-
     Image ret(w,w,1);
-    for (int k=0;k<w*w;k++) ret.data[k]=1;
+    for (int k=0;k<w*w;k++) ret.data[k]=1.0;
     l1_normalize(ret);
     return ret;
 }
@@ -34,16 +34,61 @@ Image make_box_filter(int w) {
 // returns the convolved image
 Image convolve_image(const Image &im, const Image &filter, bool preserve) {
     assert(filter.c == 1);
-    Image ret;
+    
     // This is the case when we need to use the function clamped_pixel(x,y,c).
     // Otherwise you'll have to manually check whether the filter goes out of bounds
 
     // TODO: Make sure you set the sizes of ret properly. Use ret=Image(w,h,c) to reset ret
     // TODO: Do the convolution operator
-    NOT_IMPLEMENTED();
+    int w=filter.w;
 
+	if(preserve){
+		
+		Image ret(im.w, im.h, im.c);
+		for(int x=0; x<im.w; x++){
+			for(int y=0; y<im.h; y++){
+				for(int c=0; c<im.c; c++){
+					float sum=0; //somma della maschera 
+
+					for(int i=-w/2; i<=w/2; i++){//maschera
+						for(int j=-w/2; j<=w/2; j++){
+							sum+=im.clamped_pixel(x+i,y+j,c)*filter.clamped_pixel(i+w/2,j+w/2,0);
+						}
+					}//fine maschera
+				ret.set_pixel(x,y,c, sum);
+				}
+			}
+		}
+	return ret;
+	}
+	
+	
+	else {
+		printf("\nnon preserve\n");
+		printf("\nw=%d\n",w);
+
+		Image ret(im.w, im.h, 1);
+		for(int x=0; x<im.w; x++){
+			for(int y=0; y<im.h; y++){
+				//for(int c=0; c<im.c; c++){
+				float sum=0; //somma della maschera 
+
+				for(int i=-w/2; i<=w/2; i++){//maschera
+					for(int j=-w/2; j<=w/2; j++){
+						sum+=im.clamped_pixel(x+i,y+j,0)*filter.clamped_pixel(i+w/2,j+w/2,0);
+						sum+=im.clamped_pixel(x+i,y+j,1)*filter.clamped_pixel(i+w/2,j+w/2,0);
+						sum+=im.clamped_pixel(x+i,y+j,2)*filter.clamped_pixel(i+w/2,j+w/2,0);
+
+					}
+				}//fine maschera
+			ret.set_pixel(x,y,0, sum);
+			}
+		}
+			return ret;
+	}
+	
     // Make sure to return ret and not im. This is just a placeholder
-    return im;
+	
 }
 
 // HW1 #2.2+ Fast convolution
@@ -65,14 +110,30 @@ Image convolve_image_fast(const Image &im, const Image &filter, bool preserve) {
     return im;
 }
 
+void print_f(Image f){
+    cout << "w: " << f.w << " h: " << f.h << endl;
+    for (int i=0;i<f.w;i++) {
+        cout << "| ";
+        for (int j=0;j<f.w;j++) {
+            cout << " " << f(i,j);
+        }
+        cout <<"|" << endl;
+    }
+    
+}
+Image make_arr_filter(float* arr,int l){
+    Image ret(l,l,1);
+    for (int k=0;k<l*l;k++) ret.data[k] = arr[k];
+    
+    print_f(ret);
+    return ret;
+}
 
 // HW1 #2.3
 // returns basic 3x3 high-pass filter
 Image make_highpass_filter() {
-    // TODO: Implement the filter
-    NOT_IMPLEMENTED();
-
-    return Image(1, 1, 1);
+    float a[9] = {0,-1,0,-1,4,-1,0,-1,0}; 
+    return make_arr_filter(a,3);
 
 }
 
@@ -100,10 +161,23 @@ Image make_emboss_filter() {
 // float sigma: sigma for the gaussian filter
 // returns basic gaussian filter
 Image make_gaussian_filter(float sigma) {
-    // TODO: Implement the filter
+    int ker_dim = ceil(6*sigma);
+    //cout << "ciao" << ker_dim << endl;
 
-    return Image(1, 1, 1);
-
+    if (!ker_dim%2==0) ker_dim++;
+    //cout << "ciao" << ker_dim << endl;
+    auto g = [&] (int x,int y){
+        int x_dist = x-ker_dim/2;
+        int y_dist = y-ker_dim/2;
+        return exp(-1 * (x_dist * x_dist + y_dist * y_dist) / (2 * sigma * sigma)) /
+              (2 * M_PI * sigma * sigma);
+    };
+    Image ret = make_box_filter(ker_dim);
+    for (int i=0;i<ker_dim;i++)    for (int j=0;j<ker_dim;j++)
+    ret(i,j) = g(i,j);
+    //l1_normalize(ret);
+    return ret;
+    
 }
 
 
@@ -120,10 +194,6 @@ Image add_image(const Image &a, const Image &b) {
 
 }
 
-// HW1 #3
-// const Image& a: input image
-// const Image& b: input image
-// returns their difference res=a-b
 Image sub_image(const Image &a, const Image &b) {
     assert(a.w == b.w && a.h == b.h &&
            a.c == b.c); // assure images are the same size

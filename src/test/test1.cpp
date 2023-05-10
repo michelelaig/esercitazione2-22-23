@@ -59,8 +59,12 @@ void test_multiple_resize() {
 void test_highpass_filter() {
     Image im = load_image("data/dog.jpg");
     Image f = make_highpass_filter();
-    Image blur = convolve_image(im, f, false);
+    cout <<"arr"<<f.data[0]<<endl;
+    Image blur = convolve_image(im, f, true);
+    blur.save_png("output/high");
     blur.clamp();
+    blur.save_png("output/high1");
+
     Image gt = load_image("data/dog-highpass.png");
     TEST(same_image(blur, gt));
 }
@@ -258,17 +262,18 @@ void test_equalization() {
 
 
 void run_tests() {
-    
+    cout <<"\n\n"<< endl;
     //test_nn_resize();
     //test_bl_resize();
     //test_multiple_resize();
-    test_gaussian_filter();
+    //test_gaussian_filter();
+    test_highpass_filter();
+
 
     /*
-
     test_sharpen_filter();
+
     test_emboss_filter();
-    test_highpass_filter();
     test_convolution();
     test_gaussian_blur();
     test_hybrid_image();

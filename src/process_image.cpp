@@ -75,13 +75,16 @@ void scale_image(Image& im, int c, float v)
 
 // HW0 #5
 // Image& im: input image to be modified in-place
+float clump(float v){
+  if (v>1) return 1.0;
+  if (v<0) return 0.0;
+  else return v;
+}
 void clamp_image(Image& im)
   {
-  // TODO: clamp all the pixels in all channel to be between 0 and 1
+  for (int k=0;k<im.w*im.h*im.c;k++) im.data[k]=clump(im.data[k]);
   
-  NOT_IMPLEMENTED();
-  
-  }
+}
 
 // These might be handy
 float max(float a, float b, float c)
