@@ -4,11 +4,11 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/miek/Desktop/Uni/Labiagi/esercitazione2-22-23/src/filter_image.cpp" "/home/miek/Desktop/Uni/Labiagi/esercitazione2-22-23/build/CMakeFiles/uwimg++.dir/src/filter_image.cpp.o"
-  "/home/miek/Desktop/Uni/Labiagi/esercitazione2-22-23/src/load_image.cpp" "/home/miek/Desktop/Uni/Labiagi/esercitazione2-22-23/build/CMakeFiles/uwimg++.dir/src/load_image.cpp.o"
-  "/home/miek/Desktop/Uni/Labiagi/esercitazione2-22-23/src/process_image.cpp" "/home/miek/Desktop/Uni/Labiagi/esercitazione2-22-23/build/CMakeFiles/uwimg++.dir/src/process_image.cpp.o"
-  "/home/miek/Desktop/Uni/Labiagi/esercitazione2-22-23/src/resize_image.cpp" "/home/miek/Desktop/Uni/Labiagi/esercitazione2-22-23/build/CMakeFiles/uwimg++.dir/src/resize_image.cpp.o"
-  "/home/miek/Desktop/Uni/Labiagi/esercitazione2-22-23/src/utils.cpp" "/home/miek/Desktop/Uni/Labiagi/esercitazione2-22-23/build/CMakeFiles/uwimg++.dir/src/utils.cpp.o"
+  "/home/mecella/Desktop/scuola/Labiagi/esercitazione2-22-23/src/filter_image.cpp" "/home/mecella/Desktop/scuola/Labiagi/esercitazione2-22-23/build/CMakeFiles/uwimg++.dir/src/filter_image.cpp.o"
+  "/home/mecella/Desktop/scuola/Labiagi/esercitazione2-22-23/src/load_image.cpp" "/home/mecella/Desktop/scuola/Labiagi/esercitazione2-22-23/build/CMakeFiles/uwimg++.dir/src/load_image.cpp.o"
+  "/home/mecella/Desktop/scuola/Labiagi/esercitazione2-22-23/src/process_image.cpp" "/home/mecella/Desktop/scuola/Labiagi/esercitazione2-22-23/build/CMakeFiles/uwimg++.dir/src/process_image.cpp.o"
+  "/home/mecella/Desktop/scuola/Labiagi/esercitazione2-22-23/src/resize_image.cpp" "/home/mecella/Desktop/scuola/Labiagi/esercitazione2-22-23/build/CMakeFiles/uwimg++.dir/src/resize_image.cpp.o"
+  "/home/mecella/Desktop/scuola/Labiagi/esercitazione2-22-23/src/utils.cpp" "/home/mecella/Desktop/scuola/Labiagi/esercitazione2-22-23/build/CMakeFiles/uwimg++.dir/src/utils.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

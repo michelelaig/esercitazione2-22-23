@@ -2,7 +2,7 @@
 #include <cstring>
 #include <cassert>
 #include <cmath>
-
+#include <iostream>
 #include "image.h"
 
 using namespace std;

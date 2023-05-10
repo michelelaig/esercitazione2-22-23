@@ -30,7 +30,7 @@ struct Image
     {
     assert(c>=0 && w>=0 && h>=0 && "Invalid image sizes");
     
-    if(w*h*c)
+    if(w&&h&&c)
       data=(float*)calloc(w*h*c,sizeof(float));
     
     }
@@ -174,8 +174,14 @@ struct Image
   void clear(void) const { memset(data,0,sizeof(float)*c*w*h); }
   
   // member functions for inexact access
-  
-  float pixel_nearest (float x, float y, int c) const;
+
+  void print_f(Image f);
+
+  void print_f(const Image& im);
+
+  float pixel_nearest(float x, float y, int c) const;
+  //void print_f () const;
+
   float pixel_bilinear(float x, float y, int c) const;
   
   // member functions for modifying image
@@ -208,7 +214,6 @@ struct Image
   void load_image  (const string& filename);
   void save_png    (const string& filename) const;
   void save_image  (const string& filename) const;
-  
   };
 
 // Image I/O functions
@@ -217,7 +222,6 @@ inline Image load_image  (const string& filename) { Image im; im.load_image(file
 inline void  save_png    (const Image& im, const string& filename) { im.save_png   (filename); }
 inline void  save_image  (const Image& im, const string& filename) { im.save_image (filename); }
 inline void  save_binary (const Image& im, const string& filename) { im.save_binary(filename); }
-
 
 // Basic operations
 Image rgb_to_grayscale(const Image& im);
@@ -229,7 +233,6 @@ void rgb_to_lch(Image& im);
 void shift_image(Image& im, int c, float v);
 void scale_image(Image& im, int c, float v);
 void clamp_image(Image& im);
-
 // Resizing
 Image nearest_resize (const Image& im, int w, int h);
 Image bilinear_resize(const Image& im, int w, int h);

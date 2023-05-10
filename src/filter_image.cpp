@@ -8,6 +8,8 @@
 
 #define M_PI 3.14159265358979323846
 
+
+
 // HW1 #2.1
 // Image& im: image to L1-normalize
 void l1_normalize(Image &im) {
@@ -110,22 +112,13 @@ Image convolve_image_fast(const Image &im, const Image &filter, bool preserve) {
     return im;
 }
 
-void print_f(Image f){
-    cout << "w: " << f.w << " h: " << f.h << endl;
-    for (int i=0;i<f.w;i++) {
-        cout << "| ";
-        for (int j=0;j<f.w;j++) {
-            cout << " " << f(i,j);
-        }
-        cout <<"|" << endl;
-    }
-    
-}
+
+
 Image make_arr_filter(float* arr,int l){
     Image ret(l,l,1);
     for (int k=0;k<l*l;k++) ret.data[k] = arr[k];
     
-    print_f(ret);
+    //print_f(ret);
     return ret;
 }
 
@@ -140,21 +133,15 @@ Image make_highpass_filter() {
 // HW1 #2.3
 // returns basic 3x3 sharpen filter
 Image make_sharpen_filter() {
-    // TODO: Implement the filter
-    NOT_IMPLEMENTED();
-
-    return Image(1, 1, 1);
-
+    float a[9] = {0,-1,0,-1,5,-1,0,-1,0}; 
+    return make_arr_filter(a,3);
 }
 
 // HW1 #2.3
 // returns basic 3x3 emboss filter
 Image make_emboss_filter() {
-    // TODO: Implement the filter
-    NOT_IMPLEMENTED();
-
-    return Image(1, 1, 1);
-
+    float a[9] = {-2,-1,0,-1,1,1,0,1,2}; 
+    return make_arr_filter(a,3);
 }
 
 // HW1 #2.4
@@ -216,35 +203,56 @@ Image sub_mod_image(const Image &a, const Image &b) {
 // HW1 #4.1
 // returns basic GX filter
 Image make_gx_filter() {
-    // TODO: Implement the filter
-    NOT_IMPLEMENTED();
-
-    return Image(1, 1, 1);
+    float a[9] = {-1,0,1,-2,0,2,-1,0,1}; 
+    return make_arr_filter(a,3);
 }
 
 // HW1 #4.1
 // returns basic GY filter
 Image make_gy_filter() {
-    // TODO: Implement the filter
-    NOT_IMPLEMENTED();
-
-    return Image(1, 1, 1);
+    float a[9] = {-1,-2,-1,0,0,0,1,2,1}; 
+    return make_arr_filter(a,3);
 }
 
 // HW1 #4.2
 // Image& im: input image
+/*
+void feature_normalize(Image &im) {
+    assert(im.w && im.h); // assure we have non-empty image
+    for (int c=0;c<im.c;c++){
+    
+    float M = im(0,0,c);
+    float m = im(0,0,c);
+    for (int i=0;i<im.w;i++) for(int j=0;j<im.h;j++){
+        float v = im(i,j,c);
+        if (v> M) M=v;
+        if (v<m) m=v;
+    } 
+    if (M==0 || M-m==0)     for (int i=0;i<im.w;i++) for(int j=0;j<im.h;j++) im.set_pixel(i,j,c,(im(i,j,c)-m)/(M-m));
+    else for (int i=0;i<im.w;i++) for(int j=0;j<im.h;j++) im.set_pixel(i,j,c,0);
+    }
+}
+*/
 void feature_normalize(Image &im) {
     assert(im.w * im.h); // assure we have non-empty image
-
-    // TODO: Normalize the features for each channel
-    NOT_IMPLEMENTED();
-
+	for(int z=0; z<im.c; z++){
+		float max=im.clamped_pixel(0,0,z);
+		float min=im.clamped_pixel(0,0,z);
+        for(int x=0; x<im.w; x++) for(int y=0; y<im.h; y++) {
+            float v = im(x,y,z);
+            if (v > max) max = v;
+            if (v < min) min = v;
+        }
+		if (max==min) for(int x=0; x<im.w; x++) for(int y=0; y<im.h; y++) 	im.set_pixel(x,y,z,0);
+        else for(int x=0; x<im.w; x++) for(int y=0; y<im.h; y++) 	im.set_pixel(x,y,z,(im(x,y,z)-min)/(max-min));
+	}
 }
+
 
 
 // Normalizes features across all channels
 void feature_normalize_total(Image &im) {
-    assert(im.w * im.h * im.c); // assure we have non-empty image
+    assert(im.w && im.h && im.c); // assure we have non-empty image
 
     int nc = im.c;
     im.c = 1;
@@ -262,10 +270,22 @@ void feature_normalize_total(Image &im) {
 // Image& im: input image
 // return a pair of images of the same size
 pair<Image, Image> sobel_image(const Image &im) {
-    // TODO: Your code here
-    NOT_IMPLEMENTED();
+    Image gx=make_gx_filter();
+	Image gy=make_gy_filter();
+	Image im1=convolve_image(im, gx, false);
+	Image im2=convolve_image(im, gy, false);
 
-    return {im, im};
+	Image magnitude(im.w, im.h, 1);
+	Image direction(im.w, im.h, 1);
+
+    for(int x=0; x<im.w; x++){
+		for(int y=0; y<im.h; y++){
+			magnitude.set_pixel(x,y,0,sqrtf(powf(im1(x,y,0),2.0)+
+											powf(im2(x,y,0),2.0)));
+			direction.set_pixel(x,y,0,atan2(im2(x,y,0), im1(x,y,0)));
+		}
+	}
+    return {magnitude, direction};
 }
 
 

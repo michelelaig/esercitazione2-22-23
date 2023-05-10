@@ -7,6 +7,22 @@
 
 using namespace std;
 
+void  print_f_car(Image& f){
+    cout << "w: " << f.w << " h: " << f.h << " ch: " << f.c <<endl;
+}
+void  print_f(Image& f){
+    print_f_car(f);
+    for (int i=0;i<f.w;i++) {
+        cout << "| ";
+        for (int j=0;j<f.w;j++) {
+            cout << " " << f(i,j);
+        }
+        cout <<"|" << endl;
+    }
+}
+
+
+
 void test_nn_resize() {
     Image im = load_image("data/dogsmall.jpg");
     Image resized = nearest_resize(im, im.w * 4, im.h * 4);
@@ -57,15 +73,14 @@ void test_multiple_resize() {
 
 
 void test_highpass_filter() {
-    Image im = load_image("data/dog.jpg");
+    //cambiata imm. sorgente
+    Image im = load_image("figs/dog.jpg");
     Image f = make_highpass_filter();
-    cout <<"arr"<<f.data[0]<<endl;
-    Image blur = convolve_image(im, f, true);
-    blur.save_png("output/high");
+    Image blur = convolve_image(im, f, false);
+    //print_f_car(blur);
     blur.clamp();
-    blur.save_png("output/high1");
-
     Image gt = load_image("data/dog-highpass.png");
+    //print_f_car(gt);
     TEST(same_image(blur, gt));
 }
 
@@ -267,18 +282,18 @@ void run_tests() {
     //test_bl_resize();
     //test_multiple_resize();
     //test_gaussian_filter();
-    test_highpass_filter();
-
+    //test_highpass_filter();
+    //test_sharpen_filter();
+    //test_emboss_filter();
+    //test_convolution();
+    //test_gaussian_blur();
+    //test_sobel();
 
     /*
-    test_sharpen_filter();
 
-    test_emboss_filter();
-    test_convolution();
-    test_gaussian_blur();
+
     test_hybrid_image();
     test_frequency_image();
-    test_sobel();
 
     test_bilateral();
     test_equalization();

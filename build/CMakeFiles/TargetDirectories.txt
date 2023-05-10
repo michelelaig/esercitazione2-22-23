@@ -1,5 +1,5 @@
-/home/miek/Desktop/Uni/Labiagi/esercitazione2-22-23/build/CMakeFiles/rebuild_cache.dir
-/home/miek/Desktop/Uni/Labiagi/esercitazione2-22-23/build/CMakeFiles/edit_cache.dir
-/home/miek/Desktop/Uni/Labiagi/esercitazione2-22-23/build/CMakeFiles/test1.dir
-/home/miek/Desktop/Uni/Labiagi/esercitazione2-22-23/build/CMakeFiles/test0.dir
-/home/miek/Desktop/Uni/Labiagi/esercitazione2-22-23/build/CMakeFiles/uwimg++.dir
+/home/mecella/Desktop/scuola/Labiagi/esercitazione2-22-23/build/CMakeFiles/rebuild_cache.dir
+/home/mecella/Desktop/scuola/Labiagi/esercitazione2-22-23/build/CMakeFiles/edit_cache.dir
+/home/mecella/Desktop/scuola/Labiagi/esercitazione2-22-23/build/CMakeFiles/test1.dir
+/home/mecella/Desktop/scuola/Labiagi/esercitazione2-22-23/build/CMakeFiles/test0.dir
+/home/mecella/Desktop/scuola/Labiagi/esercitazione2-22-23/build/CMakeFiles/uwimg++.dir
